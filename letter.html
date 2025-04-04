@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>e-Letter | Love U.</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #3a3a3a;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        /* Envelope Styles */
+        .envelope-container {
+            position: relative;
+            width: 300px;
+            height: 220px;
+            margin: 30px auto;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .envelope {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s ease;
+        }
+
+        .envelope.open {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #5c6ac4;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+            transform-origin: bottom;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            width: 0;
+            height: 0;
+            top: 0px;
+            left: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 100px solid #4c5aa9;
+            transform-origin: top;
+            z-index: 3;
+            transition: transform 0.6s ease;
+        }
+
+        .envelope.opening .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #eef0fa;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transform: rotateX(180deg);
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .envelope-content {
+            width: 90%;
+            height: 150px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .letter {
+            position: absolute;
+            width: 280px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(-150px);
+            transition: all 0.8s ease;
+            z-index: 1;
+        }
+
+        .letter.visible {
+            opacity: 1;
+            transform: translateY(-230px);
+        }
+
+        .letter h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 26px;
+            color: #5c6ac4;
+        }
+
+        .letter p {
+            font-size: 14px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .letter .signature {
+            text-align: right;
+            font-family: 'Dancing Script', cursive;
+            font-size: 20px;
+            color: #5c6ac4;
+            margin-top: 15px;
+        }
+
+        .form-section {
+            width: 100%;
+            margin-top: 200px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .form-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            transition: all 0.3s ease;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #5c6ac4;
+            box-shadow: 0 0 0 2px rgba(92, 106, 196, 0.1);
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #5c6ac4;
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            display: block;
+            margin: 20px auto;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        button:hover {
+            background-color: #4c5aa9;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #receipt {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 380px;
+            margin: 20px auto;
+            font-family: 'Poppins', monospace;
+            animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        @keyframes scaleIn {
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            padding: 3px 0;
+        }
+
+        .receipt-item:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .receipt-footer {
+            margin-top: 15px;
+            text-align: center;
+            border-top: 1px dashed #ccc;
+            padding-top: 10px;
+        }
+
+        .receipt-cashier {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-size: 14px;
+        }
+
+        .subtle-accent {
+            color: #5c6ac4;
+            font-weight: 500;
+            display: inline-block;
+            position: relative;
+        }
+
+        .subtle-accent::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: rgba(92, 106, 196, 0.2);
+            bottom: 0;
+            left: 0;
+        }
+
+        .click-instruction {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .click-instruction.hidden {
+            opacity: 0;
+        }
+
+        .envelope-front .envelope-text {
+            color: white;
+            font-family: 'Dancing Script', cursive;
+            font-size: 24px;
+        }
+
+        .envelope-front .envelope-subtext {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+        }
+
+        .field-animation {
+            transition: all 0.3s ease;
+        }
+
+        .field-animation:focus-within label {
+            color: #5c6ac4;
+            transform: translateY(-2px);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 0;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .receipt-logo {
+            text-align: center;
+            font-family: 'Dancing Script', cursive;
+            font-size: 24px;
+            color: #5c6ac4;
+            margin-bottom: 5px;
+        }
+
+        .receipt-qr {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 12px;
+        }
+
+        .receipt-qr img {
+            width: 80px;
+            height: 80px;
+            margin: 10px auto;
+            display: block;
+        }
+
+        .barcode {
+            margin: 10px 0;
+            padding: 5px 0;
+            text-align: center;
+            border-top: 1px dashed #ccc;
+            border-bottom: 1px dashed #ccc;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        /* New styles for screenshot instructions */
+        .screenshot-instructions {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f0f4ff;
+            border: 1px dashed #5c6ac4;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .receipt-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        #downloadBtn {
+            background-color: #4CAF50;
+        }
+
+        /* Mobile responsiveness improvements */
+        @media screen and (max-width: 480px) {
+            .container {
+                padding: 10px;
+                margin: 10px auto;
+            }
+
+            .envelope-container {
+                width: 260px;
+                height: 190px;
+            }
+
+            .envelope-flap {
+                border-left: 130px solid transparent;
+                border-right: 130px solid transparent;
+                border-top: 90px solid #4c5aa9;
+            }
+
+            .letter {
+                width: 240px;
+                padding: 15px;
+            }
+
+            .letter.visible {
+                transform: translateY(-200px);
+            }
+
+            .letter h2 {
+                font-size: 22px;
+            }
+
+            .letter p {
+                font-size: 13px;
+            }
+
+            .form-section {
+                padding: 20px;
+                margin-top: 180px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            label {
+                font-size: 0.9rem;
+            }
+
+            input,
+            select,
+            textarea {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+
+            #receipt {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="envelope-container">
+            <div class="envelope">
+                <div class="envelope-front">
+                    <div class="envelope-text">Hai Cantik!</div>
+                    <div class="envelope-subtext">Klik untuk membuka</div>
+                </div>
+                <div class="envelope-flap"></div>
+                <div class="envelope-back">
+                    <div class="envelope-content"></div>
+                </div>
+            </div>
+
+            <div class="letter">
+                <h2>Untuk Piti</h2>
+                <p>Hai Cantik,</p>
+                <p>i want you to know how deeply I care for you. you bring light into my life, and every moment spent
+                    with you is a treasure. i am excited for the adventures that lie ahead and the memories we’ll
+                    continue to create together.</p>
+                <p>Jadi, ayo kita jalan!</p>
+                <p>Mohon isi form di bawah ini untuk rencana date kita.</p>
+                <p class="signature">Agii</p>
+            </div>
+        </div>
+
+        <div class="click-instruction">Klik amplop untuk membukanya</div>
+
+        <div class="form-section">
+            <h2>Rencana Date Kita</h2>
+            <form id="dateForm">
+                <div class="form-group field-animation">
+                    <label for="name">Nama Panggilan:</label>
+                    <input type="text" id="name" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group field-animation">
+                        <label for="date">Tanggal:</label>
+                        <input type="date" id="date" required>
+                    </div>
+
+                    <div class="form-group field-animation">
+                        <label for="time">Waktu Penjemputan:</label>
+                        <input type="time" id="time" required>
+                    </div>
+                </div>
+
+                <div class="form-group field-animation">
+                    <label for="activity">Aktivitas:</label>
+                    <select id="activity" required>
+                        <option value="">-- Pilih Aktivitas --</option>
+                        <option value="Dinner">Dinner</option>
+                        <option value="Movie">Nonton Film</option>
+                        <option value="Picnic">Piknik</option>
+                        <option value="Beach">Jalan-jalan</option>
+                        <option value="Cafe">Ngopi Bareng</option>
+                        <option value="Other">Lainnya</option>
+                    </select>
+                </div>
+
+                <div class="form-group field-animation" id="otherActivityGroup" style="display: none;">
+                    <label for="otherActivity">Aktivitas Lainnya:</label>
+                    <input type="text" id="otherActivity">
+                </div>
+
+                <div class="form-group field-animation">
+                    <label for="location">Saran Tempat:</label>
+                    <input type="text" id="location" placeholder="Nama restoran, mall, cafe, dll">
+                </div>
+
+                <div class="form-group field-animation">
+                    <label for="dresscode">Dresscode:</label>
+                    <input type="text" id="dresscode" placeholder="Putih-Coklat, dll">
+                </div>
+
+                <div class="form-group field-animation">
+                    <label for="duration">Durasi (jam):</label>
+                    <input type="number" id="duration" min="1" max="24" value="2">
+                </div>
+
+                <div class="form-group field-animation">
+                    <label for="specialRequest">Catatan Tambahan:</label>
+                    <textarea id="specialRequest"
+                        placeholder="Request khusus, hal yang ingin dihindari, dll"></textarea>
+                </div>
+
+                <button type="button" id="generateBtn">Buat Struk Date</button>
+            </form>
+        </div>
+
+        <div id="receipt" style="display: none;">
+            <div class="receipt-logo">Love U.</div>
+            <div class="receipt-header">
+                <h3>RENCANA DATE</h3>
+                <p id="receiptDatePrint"></p>
+                <p id="receiptTimePrint"></p>
+            </div>
+
+            <div class="barcode">* DATE-<span id="orderNumber"></span> *</div>
+
+            <div class="receipt-body">
+                <div class="receipt-item">
+                    <span>Untuk</span>
+                    <span id="receiptName"></span>
+                </div>
+                <div class="receipt-item">
+                    <span>Tanggal</span>
+                    <span id="receiptDateVal"></span>
+                </div>
+                <div class="receipt-item">
+                    <span>Waktu Jemput</span>
+                    <span id="receiptTime"></span>
+                </div>
+                <div class="receipt-item">
+                    <span>Aktivitas</span>
+                    <span id="receiptActivity"></span>
+                </div>
+                <div class="receipt-item">
+                    <span>Tempat</span>
+                    <span id="receiptLocation"></span>
+                </div>
+                <div class="receipt-item">
+                    <span>Dresscode</span>
+                    <span id="receiptDresscode"></span>
+                </div>
+                <div class="receipt-item">
+                    <span>Durasi</span>
+                    <span id="receiptDuration"></span>
+                </div>
+                <div class="receipt-item" id="receiptSpecialBlock">
+                    <span>Catatan</span>
+                    <span id="receiptSpecial"></span>
+                </div>
+            </div>
+
+            <div class="receipt-cashier">
+                <span>Kasir: Argy Anggara</span>
+                <span id="receiptOrderTime"></span>
+            </div>
+
+            <div class="receipt-footer">
+                <p>Rencana date ini dibuat khusus untukmu</p>
+                <p class="subtle-accent">See you soon!</p>
+            </div>
+
+            <div class="receipt-qr">
+                <div>Scan untuk konfirmasi</div>
+                <svg width="80" height="80" viewBox="0 0 80 80">
+                    <rect x="10" y="10" width="60" height="60" fill="none" stroke="#000" stroke-width="1" />
+                    <path d="M20 20h20v20h-20z" fill="#000" />
+                    <path d="M50 20h10v10h-10z" fill="#000" />
+                    <path d="M40 40h20v20h-20z" fill="#000" />
+                    <path d="M20 50h10v10h-10z" fill="#000" />
+                    <path d="M35 25h5v5h-5z" fill="#fff" />
+                </svg>
+                <div id="qrCode">DATE-ID-<span id="qrOrderNumber"></span></div>
+            </div>
+
+            <div class="screenshot-instructions">
+                <p><strong>Cara Screenshot Struk:</strong></p>
+                <p>• Android: Tekan tombol Power + Volume Down bersamaan</p>
+                <p>• iPhone: Tekan tombol Side + Volume Up bersamaan</p>
+            </div>
+
+            <div class="receipt-actions">
+                <button id="shareBtn">Bagikan Struk</button>
+                <button id="downloadBtn">Download Struk (PNG)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const envelope = document.querySelector('.envelope');
+            const envelopeContainer = document.querySelector('.envelope-container');
+            const letter = document.querySelector('.letter');
+            const formSection = document.querySelector('.form-section');
+            const clickInstruction = document.querySelector('.click-instruction');
+            let dateId = "";
+
+            // Check if it's a mobile device
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator
+                .userAgent);
+
+            // Buka amplop saat diklik
+            envelopeContainer.addEventListener('click', function () {
+                if (!envelope.classList.contains('opening')) {
+                    // Pertama, buka flap amplop
+                    envelope.classList.add('opening');
+
+                    // Sembunyikan instruksi klik
+                    clickInstruction.classList.add('hidden');
+
+                    // Setelah flap terbuka, putar amplop
+                    setTimeout(() => {
+                        envelope.classList.add('open');
+
+                        // Setelah amplop terbuka, tampilkan surat
+                        setTimeout(() => {
+                            letter.classList.add('visible');
+
+                            // Setelah surat terlihat, tampilkan form
+                            setTimeout(() => {
+                                formSection.classList.add('visible');
+                            }, 500);
+                        }, 600);
+                    }, 600);
+                }
+            });
+
+            // Animasi untuk input fields saat di-focus
+            const inputFields = document.querySelectorAll('input, select, textarea');
+            inputFields.forEach(field => {
+                field.addEventListener('focus', function () {
+                    this.parentElement.classList.add('active');
+                });
+                field.addEventListener('blur', function () {
+                    this.parentElement.classList.remove('active');
+                });
+            });
+
+            // Handling untuk aktivitas "Other"
+            const activity = document.getElementById('activity');
+            const otherActivityGroup = document.getElementById('otherActivityGroup');
+
+            activity.addEventListener('change', function () {
+                if (this.value === 'Other') {
+                    otherActivityGroup.style.display = 'block';
+                    // Smooth display animation
+                    otherActivityGroup.style.opacity = '0';
+                    setTimeout(() => {
+                        otherActivityGroup.style.opacity = '1';
+                    }, 10);
+                } else {
+                    otherActivityGroup.style.opacity = '0';
+                    setTimeout(() => {
+                        otherActivityGroup.style.display = 'none';
+                    }, 300);
+                }
+            });
+
+            // Generate struk
+            const generateBtn = document.getElementById('generateBtn');
+            generateBtn.addEventListener('click', function () {
+                // Animasi tombol saat diklik
+                this.classList.add('clicked');
+                setTimeout(() => {
+                    this.classList.remove('clicked');
+                }, 300);
+
+                const name = document.getElementById('name').value;
+                const date = document.getElementById('date').value;
+                const time = document.getElementById('time').value;
+                let activityValue = document.getElementById('activity').value;
+                if (activityValue === 'Other') {
+                    activityValue = document.getElementById('otherActivity').value;
+                }
+                const location = document.getElementById('location').value;
+                const dresscode = document.getElementById('dresscode').value;
+                const duration = document.getElementById('duration').value;
+                const specialRequest = document.getElementById('specialRequest').value;
+
+                // Validasi form
+                if (!name || !date || !time || !activityValue) {
+                    alert('Mohon isi semua field yang wajib diisi.');
+                    return;
+                }
+
+                // Format tanggal
+                const formattedDate = new Date(date).toLocaleDateString('id-ID', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                // Generate random order number untuk struk
+                const orderNumber = Math.floor(Math.random() * 900000) + 100000;
+                dateId = "DATE-ID-" + orderNumber;
+
+                // Set document title with the DATE ID for proper naming when saving
+                document.title = dateId;
+
+                // Dapatkan tanggal dan waktu pembuatan struk
+                const now = new Date();
+                const currentDate = now.toLocaleDateString('id-ID', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+                const currentTime = now.toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                // Mengisi struk
+                document.getElementById('orderNumber').textContent = orderNumber;
+                document.getElementById('qrOrderNumber').textContent = orderNumber;
+                document.getElementById('receiptDatePrint').textContent = currentDate;
+                document.getElementById('receiptTimePrint').textContent = currentTime;
+                document.getElementById('receiptOrderTime').textContent = currentTime;
+                document.getElementById('receiptName').textContent = name;
+                document.getElementById('receiptDateVal').textContent = formattedDate;
+                document.getElementById('receiptTime').textContent = time;
+                document.getElementById('receiptActivity').textContent = activityValue;
+                document.getElementById('receiptLocation').textContent = location || '-';
+                document.getElementById('receiptDresscode').textContent = dresscode || '-';
+                document.getElementById('receiptDuration').textContent = duration ? `${duration} jam` :
+                    '-';
+
+                if (specialRequest) {
+                    document.getElementById('receiptSpecial').textContent = specialRequest;
+                    document.getElementById('receiptSpecialBlock').style.display = 'flex';
+                } else {
+                    document.getElementById('receiptSpecialBlock').style.display = 'none';
+                }
+
+                // Menampilkan struk dengan animasi
+                const receipt = document.getElementById('receipt');
+                receipt.style.display = 'block';
+
+                // Scroll ke struk
+                setTimeout(() => {
+                    receipt.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }, 100);
+            });
+
+            // Share receipt functionality
+            const shareBtn = document.getElementById('shareBtn');
+            shareBtn.addEventListener('click', function () {
+                if (navigator.share) {
+                    navigator.share({
+                            title: dateId,
+                            text: 'Rencana Date Kita',
+                            url: window.location.href
+                        })
+                        .catch(error => {
+                            alert('Gagal membagikan struk. Silahkan screenshot manual.');
+                        });
+                } else {
+                    alert(
+                        'Fitur berbagi tidak didukung di browser ini. Silahkan screenshot struk secara manual.');
+                }
+            });
+
+            // Download receipt as image 
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.addEventListener('click', function () {
+                try {
+                    // If html2canvas is available, use it for smoother experience
+                    if (typeof html2canvas !== 'undefined') {
+                        const receipt = document.getElementById('receipt');
+                        html2canvas(receipt).then(canvas => {
+                            const link = document.createElement('a');
+                            link.download = dateId + '.png';
+                            link.href = canvas.toDataURL();
+                            link.click();
+                        });
+                    } else {
+                        // Fallback to screenshot instructions
+                        alert(
+                            'Fitur download tidak tersedia. Silahkan screenshot struk sesuai petunjuk.');
+                    }
+                } catch (e) {
+                    alert('Fitur download tidak tersedia. Silahkan screenshot struk sesuai petunjuk.');
+                }
+            });
+
+            // If mobile, adjust some styles
+            if (isMobile) {
+                // Make sure input fields are easily tappable
+                inputFields.forEach(field => {
+                    field.style.fontSize = '16px'; // Prevents iOS zoom on focus
+                });
+
+                // If iOS device add specific styles
+                if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    document.body.style.WebkitTapHighlightColor = 'transparent';
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
